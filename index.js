@@ -40,7 +40,7 @@ const verifyToken = async (req, res, next) => {
   }
   try {
     const { payload } = await jwtVerify(token, JWKS);
-    req.user = payload; 
+    req.user = payload;
     next();
   }
   catch (error) {
@@ -53,10 +53,24 @@ async function run() {
     await client.connect();
     const db = client.db("courtify");
     const facilitiesCollection = db.collection("facilities");
+    const bookingCollection = db.collection('bookings');
 
-   
+
+    app.post('/booking', verifyToken, async (req, res) => {
+      const bookingData = req.body
+      const result = await bookingCollection.insertOne(bookingData)
+      res.json(result)
+    })
+
+    app.get('/booking/:userId', verifyToken, async (req, res) => {
+      const { userId } = req.params
+      const result = await bookingCollection.find({ userId: userId }).toArray()
+      res.json(result)
+    })
+
+
     app.get('/facilities', async (req, res) => {
-      const { email } = req.query; 
+      const { email } = req.query;
 
       let query = {};
       if (email) {
@@ -82,6 +96,52 @@ async function run() {
       const result = await facilitiesCollection.insertOne(facilitiesData);
       res.json(result);
     });
+
+
+    // ৪. নির্দিষ্ট ID অনুযায়ী facility ডিলিট করা (নতুন যুক্ত করা হয়েছে)
+    app.delete('/facilities/:id', verifyToken, async (req, res) => {
+      const { id } = req.params;
+      try {
+        const query = { _id: new ObjectId(id) };
+        const result = await facilitiesCollection.deleteOne(query);
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+      }
+    });
+
+    // ৫. নির্দিষ্ট ID অনুযায়ী facility আপডেট করা (ব্যাকএন্ড)
+    app.patch('/facilities/:id', verifyToken, async (req, res) => {
+      const { id } = req.params;
+      const updatedData = req.body;
+      try {
+        const filter = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            name: updatedData.name,
+            facility_type: updatedData.facility_type,
+            location: updatedData.location,
+            price_per_hour: Number(updatedData.price_per_hour),
+            capacity: Number(updatedData.capacity),
+            available_slots: updatedData.available_slots,
+            image: updatedData.image
+          }
+        };
+        const result = await facilitiesCollection.updateOne(filter, updateDoc);
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+      }
+    });
+
+
+
+
+    // app.delete('/facilities/:id', verifyToken, (req, res) => {
+    //   const { id } = req.params
+    //   const result = await facilitiesCollection.deleteOne({ _id: new ObjectId(id) })
+    //   res.json(result)
+    // })
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
