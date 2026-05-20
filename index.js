@@ -68,17 +68,57 @@ async function run() {
       res.json(result)
     })
 
+    app.delete('/booking/:bookingId', verifyToken, async (req, res) => {
+      const { bookingId } = req.params
+      const result = await bookingCollection.deleteOne({ _id: new ObjectId(bookingId) })
+      res.json(result)
+    })
+
+
+    // app.get('/facilities', async (req, res) => {
+    //   const { email } = req.query;
+
+    //   let query = {};
+    //   if (email) {
+    //     query = { owner_email: email.toLowerCase() };
+    //   }
+    //   const result = await facilitiesCollection.find(query).toArray();
+    //   res.json(result);
+    // });
+
+
+
 
     app.get('/facilities', async (req, res) => {
-      const { email } = req.query;
+      try {
+        const { email, search, type } = req.query;
 
-      let query = {};
-      if (email) {
-        query = { owner_email: email.toLowerCase() };
+        let query = {};
+
+        // ইমেইল ফিল্টার
+        if (email) {
+          query.owner_email = email.toLowerCase();
+        }
+
+        // সার্চ লজিক ($regex)
+        if (search) {
+          query.name = { $regex: search, $options: 'i' };
+        }
+
+        // টাইপ ফিল্টার ($in)
+        if (type) {
+          const typeArray = Array.isArray(type) ? type : [type];
+          query.facility_type = { $in: typeArray };
+        }
+
+        const result = await facilitiesCollection.find(query).toArray();
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Internal Server Error" });
       }
-      const result = await facilitiesCollection.find(query).toArray();
-      res.json(result);
     });
+
+
 
     app.get('/facilities/:id', verifyToken, async (req, res) => {
       const { id } = req.params;
