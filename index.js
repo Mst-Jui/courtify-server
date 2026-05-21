@@ -114,15 +114,15 @@ async function run() {
     });
 
     
-    // app.post('/facilities', verifyToken, async (req, res) => {
-    //   const facilitiesData = req.body;
-    //   if (facilitiesData.owner_email) {
-    //     facilitiesData.owner_email = facilitiesData.owner_email.toLowerCase();
-    //   }
+    app.post('/facilities', verifyToken, async (req, res) => {
+      const facilitiesData = req.body;
+      if (facilitiesData.owner_email) {
+        facilitiesData.owner_email = facilitiesData.owner_email.toLowerCase();
+      }
 
-    //   const result = await facilitiesCollection.insertOne(facilitiesData);
-    //   res.json(result);
-    // });
+      const result = await facilitiesCollection.insertOne(facilitiesData);
+      res.json(result);
+    });
 
 
     
@@ -138,28 +138,28 @@ async function run() {
     });
 
     
-    app.patch('/facilities/:id', verifyToken, async (req, res) => {
-      const { id } = req.params;
-      const updatedData = req.body;
-      try {
-        const filter = { _id: new ObjectId(id) };
-        const updateDoc = {
-          $set: {
-            name: updatedData.name,
-            facility_type: updatedData.facility_type,
-            location: updatedData.location,
-            price_per_hour: Number(updatedData.price_per_hour),
-            capacity: Number(updatedData.capacity),
-            available_slots: updatedData.available_slots,
-            image: updatedData.image
-          }
-        };
-        const result = await facilitiesCollection.updateOne(filter, updateDoc);
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ message: "Internal Server Error", error: error.message });
-      }
-    });
+    // app.patch('/facilities/:id', verifyToken, async (req, res) => {
+    //   const { id } = req.params;
+    //   const updatedData = req.body;
+    //   try {
+    //     const filter = { _id: new ObjectId(id) };
+    //     const updateDoc = {
+    //       $set: {
+    //         name: updatedData.name,
+    //         facility_type: updatedData.facility_type,
+    //         location: updatedData.location,
+    //         price_per_hour: Number(updatedData.price_per_hour),
+    //         capacity: Number(updatedData.capacity),
+    //         available_slots: updatedData.available_slots,
+    //         image: updatedData.image
+    //       }
+    //     };
+    //     const result = await facilitiesCollection.updateOne(filter, updateDoc);
+    //     res.json(result);
+    //   } catch (error) {
+    //     res.status(500).json({ message: "Internal Server Error", error: error.message });
+    //   }
+    // });
 
 
 
