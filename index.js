@@ -60,20 +60,13 @@ async function run() {
     app.get('/facilities', async (req, res) => {
       try {
         const { email, search, type } = req.query;
-
         let query = {};
-
-        
         if (email) {
           query.owner_email = email.toLowerCase();
         }
-
-        
         if (search) {
           query.name = { $regex: search, $options: 'i' };
         }
-
-        
         if (type) {
           const typeArray = Array.isArray(type) ? type : [type];
           query.facility_type = { $in: typeArray };
@@ -89,11 +82,11 @@ async function run() {
 
 
 
-    app.post('/booking', verifyToken, async (req, res) => {
-      const bookingData = req.body
-      const result = await bookingCollection.insertOne(bookingData)
-      res.json(result)
-    })
+    // app.post('/booking', verifyToken, async (req, res) => {
+    //   const bookingData = req.body
+    //   const result = await bookingCollection.insertOne(bookingData)
+    //   res.json(result)
+    // })
 
     app.get('/booking/:userId', verifyToken, async (req, res) => {
       const { userId } = req.params
