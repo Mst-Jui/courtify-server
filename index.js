@@ -50,10 +50,43 @@ const verifyToken = async (req, res, next) => {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db("courtify");
     const facilitiesCollection = db.collection("facilities");
     const bookingCollection = db.collection('bookings');
+
+
+
+    app.get('/facilities', async (req, res) => {
+      try {
+        const { email, search, type } = req.query;
+
+        let query = {};
+
+        
+        if (email) {
+          query.owner_email = email.toLowerCase();
+        }
+
+        
+        if (search) {
+          query.name = { $regex: search, $options: 'i' };
+        }
+
+        
+        if (type) {
+          const typeArray = Array.isArray(type) ? type : [type];
+          query.facility_type = { $in: typeArray };
+        }
+
+        const result = await facilitiesCollection.find(query).toArray();
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Internal Server Error" });
+      }
+    });
+
+
 
 
     app.post('/booking', verifyToken, async (req, res) => {
@@ -75,48 +108,9 @@ async function run() {
     })
 
 
-    // app.get('/facilities', async (req, res) => {
-    //   const { email } = req.query;
-
-    //   let query = {};
-    //   if (email) {
-    //     query = { owner_email: email.toLowerCase() };
-    //   }
-    //   const result = await facilitiesCollection.find(query).toArray();
-    //   res.json(result);
-    // });
+    
 
 
-
-
-    app.get('/facilities', async (req, res) => {
-      try {
-        const { email, search, type } = req.query;
-
-        let query = {};
-
-        // ইমেইল ফিল্টার
-        if (email) {
-          query.owner_email = email.toLowerCase();
-        }
-
-        // সার্চ লজিক ($regex)
-        if (search) {
-          query.name = { $regex: search, $options: 'i' };
-        }
-
-        // টাইপ ফিল্টার ($in)
-        if (type) {
-          const typeArray = Array.isArray(type) ? type : [type];
-          query.facility_type = { $in: typeArray };
-        }
-
-        const result = await facilitiesCollection.find(query).toArray();
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ message: "Internal Server Error" });
-      }
-    });
 
 
 
@@ -126,7 +120,7 @@ async function run() {
       res.json(result);
     });
 
-    // ৩. নতুন facility তৈরি করা
+    
     app.post('/facilities', verifyToken, async (req, res) => {
       const facilitiesData = req.body;
       if (facilitiesData.owner_email) {
@@ -138,7 +132,7 @@ async function run() {
     });
 
 
-    // ৪. নির্দিষ্ট ID অনুযায়ী facility ডিলিট করা (নতুন যুক্ত করা হয়েছে)
+    
     app.delete('/facilities/:id', verifyToken, async (req, res) => {
       const { id } = req.params;
       try {
@@ -150,7 +144,7 @@ async function run() {
       }
     });
 
-    // ৫. নির্দিষ্ট ID অনুযায়ী facility আপডেট করা (ব্যাকএন্ড)
+    
     app.patch('/facilities/:id', verifyToken, async (req, res) => {
       const { id } = req.params;
       const updatedData = req.body;
@@ -177,13 +171,8 @@ async function run() {
 
 
 
-    // app.delete('/facilities/:id', verifyToken, (req, res) => {
-    //   const { id } = req.params
-    //   const result = await facilitiesCollection.deleteOne({ _id: new ObjectId(id) })
-    //   res.json(result)
-    // })
-
-    await client.db("admin").command({ ping: 1 });
+    
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
