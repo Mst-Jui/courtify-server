@@ -126,16 +126,16 @@ async function run() {
 
 
     
-    // app.delete('/facilities/:id', verifyToken, async (req, res) => {
-    //   const { id } = req.params;
-    //   try {
-    //     const query = { _id: new ObjectId(id) };
-    //     const result = await facilitiesCollection.deleteOne(query);
-    //     res.json(result);
-    //   } catch (error) {
-    //     res.status(500).json({ message: "Internal Server Error", error: error.message });
-    //   }
-    // });
+    app.delete('/facilities/:id', verifyToken, async (req, res) => {
+      const { id } = req.params;
+      try {
+        const query = { _id: new ObjectId(id) };
+        const result = await facilitiesCollection.deleteOne(query);
+        res.json(result);
+      } catch (error) {
+        res.status(500).json({ message: "Internal Server Error", error: error.message });
+      }
+    });
 
     
     app.patch('/facilities/:id', verifyToken, async (req, res) => {
