@@ -94,11 +94,11 @@ async function run() {
       res.json(result)
     })
 
-    // app.delete('/booking/:bookingId', verifyToken, async (req, res) => {
-    //   const { bookingId } = req.params
-    //   const result = await bookingCollection.deleteOne({ _id: new ObjectId(bookingId) })
-    //   res.json(result)
-    // })
+    app.delete('/booking/:bookingId', verifyToken, async (req, res) => {
+      const { bookingId } = req.params
+      const result = await bookingCollection.deleteOne({ _id: new ObjectId(bookingId) })
+      res.json(result)
+    })
 
 
     
@@ -107,11 +107,11 @@ async function run() {
 
 
 
-    app.get('/facilities/:id', verifyToken, async (req, res) => {
-      const { id } = req.params;
-      const result = await facilitiesCollection.findOne({ _id: new ObjectId(id) });
-      res.json(result);
-    });
+    // app.get('/facilities/:id', verifyToken, async (req, res) => {
+    //   const { id } = req.params;
+    //   const result = await facilitiesCollection.findOne({ _id: new ObjectId(id) });
+    //   res.json(result);
+    // });
 
     
     app.post('/facilities', verifyToken, async (req, res) => {
