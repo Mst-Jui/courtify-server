@@ -107,22 +107,22 @@ async function run() {
 
 
 
-    // app.get('/facilities/:id', verifyToken, async (req, res) => {
-    //   const { id } = req.params;
-    //   const result = await facilitiesCollection.findOne({ _id: new ObjectId(id) });
-    //   res.json(result);
-    // });
-
-    
-    app.post('/facilities', verifyToken, async (req, res) => {
-      const facilitiesData = req.body;
-      if (facilitiesData.owner_email) {
-        facilitiesData.owner_email = facilitiesData.owner_email.toLowerCase();
-      }
-
-      const result = await facilitiesCollection.insertOne(facilitiesData);
+    app.get('/facilities/:id', verifyToken, async (req, res) => {
+      const { id } = req.params;
+      const result = await facilitiesCollection.findOne({ _id: new ObjectId(id) });
       res.json(result);
     });
+
+    
+    // app.post('/facilities', verifyToken, async (req, res) => {
+    //   const facilitiesData = req.body;
+    //   if (facilitiesData.owner_email) {
+    //     facilitiesData.owner_email = facilitiesData.owner_email.toLowerCase();
+    //   }
+
+    //   const result = await facilitiesCollection.insertOne(facilitiesData);
+    //   res.json(result);
+    // });
 
 
     
