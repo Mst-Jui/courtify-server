@@ -82,11 +82,11 @@ async function run() {
 
 
 
-    // app.post('/booking', verifyToken, async (req, res) => {
-    //   const bookingData = req.body
-    //   const result = await bookingCollection.insertOne(bookingData)
-    //   res.json(result)
-    // })
+    app.post('/booking', verifyToken, async (req, res) => {
+      const bookingData = req.body
+      const result = await bookingCollection.insertOne(bookingData)
+      res.json(result)
+    })
 
     app.get('/booking/:userId', verifyToken, async (req, res) => {
       const { userId } = req.params
