@@ -88,11 +88,11 @@ async function run() {
       res.json(result)
     })
 
-    app.get('/booking/:userId', verifyToken, async (req, res) => {
-      const { userId } = req.params
-      const result = await bookingCollection.find({ userId: userId }).toArray()
-      res.json(result)
-    })
+    // app.get('/booking/:userId', verifyToken, async (req, res) => {
+    //   const { userId } = req.params
+    //   const result = await bookingCollection.find({ userId: userId }).toArray()
+    //   res.json(result)
+    // })
 
     app.delete('/booking/:bookingId', verifyToken, async (req, res) => {
       const { bookingId } = req.params
